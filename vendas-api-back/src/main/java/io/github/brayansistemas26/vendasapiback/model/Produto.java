@@ -30,4 +30,9 @@ public class Produto implements Serializable {
     private BigDecimal preco;
 
     private LocalDate dataCadastro;
+
+    @PrePersist
+    public void prePersist() {
+        setDataCadastro(LocalDate.now());
+    }
 }

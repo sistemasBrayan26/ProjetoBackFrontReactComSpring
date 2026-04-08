@@ -1,5 +1,6 @@
 package io.github.brayansistemas26.vendasapiback.rest.produtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -18,5 +19,6 @@ public class ProdutoFormRequest {
 
     private String nome;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataCadastro;
 }

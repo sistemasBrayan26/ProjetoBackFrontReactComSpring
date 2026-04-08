@@ -3,9 +3,12 @@ package io.github.brayansistemas26.vendasapiback.rest.produtos;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 public class ProdutoFormRequest {
+
+    private Long id;
 
     private String sku;
 
@@ -14,4 +17,6 @@ public class ProdutoFormRequest {
     private BigDecimal preco;
 
     private String nome;
+
+    private LocalDate dataCadastro;
 }

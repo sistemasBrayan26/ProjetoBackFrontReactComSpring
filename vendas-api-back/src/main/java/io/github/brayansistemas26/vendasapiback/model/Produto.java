@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -25,6 +26,8 @@ public class Produto implements Serializable {
     private String nome;
 
     private String descricao;
-    
+
     private BigDecimal preco;
+
+    private LocalDate dataCadastro;
 }

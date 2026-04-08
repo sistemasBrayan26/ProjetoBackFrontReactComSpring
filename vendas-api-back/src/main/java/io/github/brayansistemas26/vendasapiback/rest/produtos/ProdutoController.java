@@ -24,6 +24,6 @@ public class ProdutoController {
     public ProdutoFormRequest salvar(@RequestBody ProdutoFormRequest produto){
         Produto produtoSalvo = modelMapper.map(produto, Produto.class);
         produtoSalvo = produtoRepository.save(produtoSalvo);
-        return produto;
+        return modelMapper.map(produtoSalvo, ProdutoFormRequest.class);
     }
 }

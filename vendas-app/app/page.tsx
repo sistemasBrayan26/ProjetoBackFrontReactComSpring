@@ -4,7 +4,7 @@ const Home: React.FC = () => {
     return (
      <div>
 
-        <Layout titulo='Produto'>
+        <Layout titulo='Home'>
             Testando a parte do Home
         </Layout>
      </div>

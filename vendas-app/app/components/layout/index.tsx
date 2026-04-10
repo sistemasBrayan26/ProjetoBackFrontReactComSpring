@@ -1,9 +1,12 @@
 import { ReactNode } from 'react';
 import {Menu} from './menu'
+import {Message} from '@/app/components/common/message'
+import { Alert } from '@/app/components/common/message';
 
 interface LayoutProps {
     titulo: string;
     children?: ReactNode;
+    mensagens? : Array<Alert>;
 
 }
 
@@ -23,6 +26,9 @@ export const Layout : React.FC<LayoutProps> = (props : LayoutProps) => {
                             </div>
                             <div className="card-content">
                                 <div className="content">
+                                    {
+                                        props.mensagens && props.mensagens.map((msg, index) => <Message key={index} {...msg} />)
+                                    }
                                     {props.children}
                                 </div>
                             </div>

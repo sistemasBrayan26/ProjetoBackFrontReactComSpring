@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import 'bulma/css/bulma.min.css'
+import '@/app/components/common/loader/loader.css'
 import "./globals.css";
 
 const geistSans = Geist({

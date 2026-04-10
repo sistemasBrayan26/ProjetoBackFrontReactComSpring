@@ -7,6 +7,7 @@ import { Produto } from '@/app/models/produtos'
 import { converterEmBigDecimal } from '@/app/util/money'
 import { Alert } from '../../common/message'
 import * as yup from 'yup'
+import Link from 'next/link'
 
 const msgCampoObrigatorio = " campo obrigatório."
 
@@ -29,6 +30,7 @@ export const CadastroProdutos: React.FC = () => {
     const [id, setId] = useState<string | undefined>('')
     const [dataCadastro, setDataCadastro] = useState<string | undefined>('')
     const [messages, setMessages] = useState<Array<Alert>>([])
+    const [errors, setErrors] = useState<formErros>({})
 
     const submit = () => {
         const produto: Produto = {
@@ -36,6 +38,7 @@ export const CadastroProdutos: React.FC = () => {
         }
 
         validationSchema.validate(produto).then(obj => {
+            setErrors({})
             if (id) {
                 service.atualizar(produto).then(response => {
                     setMessages([{
@@ -56,12 +59,18 @@ export const CadastroProdutos: React.FC = () => {
                 const field = err.path;
                 const message = err.message;
 
-                setMessages([{
-                    tipo : "danger", field, texto: message
-                }])
+                setErrors({
+                    [field]: message
+                })
             })
     }
 
+    interface formErros {
+        sku?: string,
+        nome?: string,
+        preco?: string,
+        descricao?: string
+    }
 
     return (
         <Layout titulo="Produtos" mensagens={messages}>
@@ -73,13 +82,13 @@ export const CadastroProdutos: React.FC = () => {
             }
 
             <div className='columns'>
-                <Input label='SKU: *' id='inputSku' columnClasses='is-half' value={sku} onChange={setSku} placeholder='Digite o SKU do produto' error='Campo inválido' />
+                <Input label='SKU: *' id='inputSku' columnClasses='is-half' value={sku} onChange={setSku} placeholder='Digite o SKU do produto' error={errors.sku} />
                 <Input label='Preço: *' id='inputPreco' columnClasses='is-half' value={preco} onChange={setPreco} placeholder='Digite o preço do produto'
-                    currency={true} maxLength={16} />
+                    currency={true} maxLength={16} error={errors.preco} />
             </div>
 
             <div className='columns'>
-                <Input label='Nome: *' id='inputNome' columnClasses='is-full' value={nome} onChange={setNome} placeholder='Digite o nome do produto' />
+                <Input label='Nome: *' id='inputNome' columnClasses='is-full' value={nome} onChange={setNome} placeholder='Digite o nome do produto' error={errors.nome} />
             </div>
 
 
@@ -87,8 +96,12 @@ export const CadastroProdutos: React.FC = () => {
             <div className='field'>
                 <label htmlFor='inputdescricao' className='label'> Descrição: *</label>
                 <div className='control'>
-                    <input className='textarea' type="text" placeholder='Digite a descrição do produto' id='inputdescricao' value={descricao}
+                    <textarea className='textarea' placeholder='Digite a descrição do produto' id='inputdescricao' value={descricao}
                         onChange={event => setDescricao(event.target.value)} />
+                    {
+                        errors.descricao &&
+                        <p className='help is-danger'>{errors.descricao}</p>
+                    }
                 </div>
             </div>
 
@@ -98,7 +111,9 @@ export const CadastroProdutos: React.FC = () => {
                     <button className='button is-primary' onClick={submit}>{id ? "Atualizar" : "Salvar"}</button>
                 </div>
                 <div className='control'>
-                    <button className='button is-danger'>Voltar</button>
+                    <Link href={"/consultas/produtos"}>
+                        <button className='button is-danger'>Voltar</button>
+                    </Link>
                 </div>
             </div>
 

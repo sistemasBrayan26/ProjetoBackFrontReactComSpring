@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/produtos")
 public class ProdutoController {
@@ -38,6 +41,12 @@ public class ProdutoController {
 
         return ResponseEntity.ok().build();
 
+    }
+
+    @GetMapping
+    public List<ProdutoFormRequest> getLista() {
+        return produtoRepository.findAll().stream().map(
+                p -> modelMapper.map(p, ProdutoFormRequest.class)).collect(Collectors.toList());
     }
 
 }

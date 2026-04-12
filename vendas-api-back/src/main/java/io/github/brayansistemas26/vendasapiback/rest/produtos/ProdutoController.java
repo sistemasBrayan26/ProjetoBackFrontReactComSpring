@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +42,18 @@ public class ProdutoController {
 
         return ResponseEntity.ok().build();
 
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProdutoFormRequest> getById(@PathVariable Long id){
+        Optional<Produto> produtoExistente = produtoRepository.findById(id);
+
+        if (produtoExistente.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        var produtoRecuperado = modelMapper.map(produtoExistente.get(), ProdutoFormRequest.class);
+        return ResponseEntity.ok(produtoRecuperado);
     }
 
     @GetMapping

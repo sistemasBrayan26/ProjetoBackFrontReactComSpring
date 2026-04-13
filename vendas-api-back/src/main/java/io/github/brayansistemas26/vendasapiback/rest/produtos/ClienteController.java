@@ -31,34 +31,32 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> editar(@PathVariable Long id, @RequestBody ClienteFormRequest cliente){
-        Optional<Cliente> clienteEncontrado = clienteRepository.findById(id);
+    public ResponseEntity<Void> editar(@PathVariable Long id, @RequestBody ClienteFormRequest clienteRequest) {
+        return clienteRepository.findById(id).map(clienteExistente -> {
+            modelMapper.map(clienteRequest, clienteExistente);
+            clienteExistente.setId(id);
+            clienteRepository.save(clienteExistente);
 
-        if (clienteEncontrado.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
+            return ResponseEntity.ok().<Void>build();
 
-        modelMapper.map(cliente, clienteEncontrado);
-        clienteEncontrado.get().setId(id);
-        clienteRepository.save(clienteEncontrado.get());
-
-        return ResponseEntity.ok().build();
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ClienteFormRequest> getById(@PathVariable Long id){
         return clienteRepository.findById(id)
-                .map(cliente -> {
-                    ClienteFormRequest dto = modelMapper.map(cliente, ClienteFormRequest.class);
-                    return ResponseEntity.ok(dto);
-                })
+                .map(cliente -> ResponseEntity.ok(modelMapper.map(cliente, ClienteFormRequest.class)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<ClienteFormRequest> getLista() {
-        return clienteRepository.findAll().stream().map(cliente -> modelMapper.map(cliente, ClienteFormRequest.class))
+    public ResponseEntity<List<ClienteFormRequest>> getLista() {
+        List<ClienteFormRequest> lista = clienteRepository.findAll()
+                .stream()
+                .map(cliente -> modelMapper.map(cliente, ClienteFormRequest.class))
                 .collect(Collectors.toList());
+
+        return ResponseEntity.ok(lista);
     }
 
     @DeleteMapping("/{id}")

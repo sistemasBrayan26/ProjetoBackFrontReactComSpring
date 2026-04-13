@@ -1,9 +1,9 @@
-import { httpClient } from "../http";
-import { AxiosResponse } from "axios";
-import { Cliente } from "../models/clientes";
 import { string } from "yup";
+import { httpClient } from "../http";
+import { Cliente } from "../models/clientes";
+import { AxiosResponse } from "axios";
 
-const resourceURL: string = 'api/clientes';
+const resourceURL: string = "api/clientes";
 
 export const useClienteService = () => {
 

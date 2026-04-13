@@ -2,6 +2,7 @@
 import { Cliente } from "@/app/models/clientes"
 import { useFormik } from "formik";
 import { Input, InputCPF, InputTelefone, InputDate } from "../../common";
+import * as Yup from 'yup';
 
 interface ClienteFormProps {
     cliente: Cliente;
@@ -19,13 +20,25 @@ const formScheme: Cliente = {
     telefone: ''
 }
 
+const campoObrigatorioMensagem = "Campo obrigatório";
+
+const validationScheme = Yup.object().shape({
+    nome : Yup.string().trim().required(campoObrigatorioMensagem),
+    cpf: Yup.string().trim().required(campoObrigatorioMensagem).length(14, "CPF inválido"), 
+    nascimento: Yup.date().required(campoObrigatorioMensagem),
+     email: Yup.string().trim().required(campoObrigatorioMensagem).email("E-mail inválido"), 
+     endereco: Yup.string().trim().required(campoObrigatorioMensagem), 
+     telefone: Yup.string().trim().required(campoObrigatorioMensagem)
+});
+
 export const ClienteForm: React.FC<ClienteFormProps> = ({
     cliente, onSubmit }
 ) => {
 
     const formik = useFormik<Cliente>({
         initialValues: { ...formScheme, ...cliente },
-        onSubmit,
+        onSubmit, enableReinitialize: true, 
+        validationSchema : validationScheme
     })
 
     const caixaAlta = (value: string) => {
@@ -43,22 +56,24 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({
             }
 
             <div className="columns">
-                <Input id="nome" name="nome" onChange={formik.handleChange} value={formik.values.nome} label="Nome: *" autoComplete="off" columnClasses="is-full" formatter={caixaAlta}
-                 />
+                <Input id="nome" name="nome" onChange={formik.handleChange} value={formik.values.nome} label="Nome: *" autoComplete="off" columnClasses="is-full" 
+                formatter={caixaAlta} error={formik.errors.nome}/>
             </div>
             <div className="columns">
-                <InputCPF id="cpf" name="cpf" onChange={formik.handleChange} value={formik.values.cpf} label="CPF: *" autoComplete="off" columnClasses="is-half" />
+                <InputCPF id="cpf" name="cpf" onChange={formik.handleChange} value={formik.values.cpf} label="CPF: *" autoComplete="off" columnClasses="is-half"
+                error={formik.errors.cpf} />
                 <InputDate id="nascimento" name="nascimento" onChange={formik.handleChange} value={formik.values.nascimento} label="Data Nascimento: *" autoComplete="off"
-                    columnClasses="is-half" />
+                    columnClasses="is-half" error={formik.errors.nascimento} />
             </div>
             <div className="columns">
                 <Input id="endereco" name="endereco" onChange={formik.handleChange} value={formik.values.endereco} label="Endereço: *" autoComplete="off" columnClasses="is-full"
-                formatter={caixaAlta} />
+                formatter={caixaAlta} error={formik.errors.endereco} />
             </div>
             <div className="columns">
-                <Input id="email" name="email" onChange={formik.handleChange} value={formik.values.email} label="E-mail: *" autoComplete="off" columnClasses="is-half" />
+                <Input id="email" name="email" onChange={formik.handleChange} value={formik.values.email} label="E-mail: *" autoComplete="off" columnClasses="is-half"
+                error={formik.errors.email} />
                 <InputTelefone id="telefone" name="telefone" onChange={formik.handleChange} value={formik.values.telefone} label="Telefone: *" autoComplete="off"
-                    columnClasses="is-half" />
+                    columnClasses="is-half" error={formik.errors.telefone} />
             </div>
 
             <div className="field is-grouped">

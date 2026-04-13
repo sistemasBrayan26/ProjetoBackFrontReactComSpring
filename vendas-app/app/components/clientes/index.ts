@@ -1,0 +1,1 @@
+export {CadastroCliente} from '@/app/components/clientes/cadastro'

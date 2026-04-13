@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -43,5 +45,30 @@ public class ClienteController {
         return ResponseEntity.ok().build();
     }
 
-    
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteFormRequest> getById(@PathVariable Long id){
+        return clienteRepository.findById(id)
+                .map(cliente -> {
+                    ClienteFormRequest dto = modelMapper.map(cliente, ClienteFormRequest.class);
+                    return ResponseEntity.ok(dto);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public List<ClienteFormRequest> getLista() {
+        return clienteRepository.findAll().stream().map(cliente -> modelMapper.map(cliente, ClienteFormRequest.class))
+                .collect(Collectors.toList());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        return clienteRepository.findById(id).map(cliente -> {
+            clienteRepository.delete(cliente);
+            return ResponseEntity.noContent().build();
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
 }

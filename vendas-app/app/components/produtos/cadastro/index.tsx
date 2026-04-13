@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout, Input, Message } from "@/app/components";
+import { Layout, Input, InputMoney } from "@/app/components";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useProdutoService } from "@/app/services";
@@ -131,18 +131,17 @@ export const CadastroProdutos: React.FC = () => {
           id="inputSku"
           columnClasses="is-half"
           value={sku}
-          onChange={setSku}
+          onChange={e => setSku(e.target.value)}
           placeholder="Digite o SKU do produto"
           error={errors.sku}
         />
-        <Input
+        <InputMoney
           label="Preço: *"
           id="inputPreco"
           columnClasses="is-half"
           value={preco}
-          onChange={setPreco}
+          onChange={e => setPreco(e.target.value)}
           placeholder="Digite o preço do produto"
-          currency={true}
           maxLength={16}
           error={errors.preco}
         />
@@ -154,7 +153,7 @@ export const CadastroProdutos: React.FC = () => {
           id="inputNome"
           columnClasses="is-full"
           value={nome}
-          onChange={setNome}
+          onChange={e => setNome(e.target.value)}
           placeholder="Digite o nome do produto"
           error={errors.nome}
         />

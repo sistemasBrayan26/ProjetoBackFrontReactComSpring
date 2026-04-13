@@ -1,3 +1,4 @@
 export { Layout} from './layout'
 export {CadastroProdutos, ListagemProdutos} from './produtos'
-export {Input, Message} from '@/app/components/common'
+export {Input, InputMoney, Message, Loader} from '@/app/components/common'
+export {CadastroCliente} from './clientes' 

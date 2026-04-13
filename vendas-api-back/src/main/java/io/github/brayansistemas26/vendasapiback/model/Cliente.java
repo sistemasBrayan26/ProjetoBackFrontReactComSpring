@@ -1,5 +1,6 @@
 package io.github.brayansistemas26.vendasapiback.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ public class Cliente implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate nascimento;
 
     private String cpf;
@@ -31,6 +33,7 @@ public class Cliente implements Serializable {
 
     private String email;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataCadastro;
 
     @PrePersist

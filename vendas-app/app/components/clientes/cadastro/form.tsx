@@ -1,7 +1,7 @@
 "use client"
 import { Cliente } from "@/app/models/clientes"
 import { useFormik } from "formik";
-import { Input } from "../../common";
+import { Input, InputCPF, InputTelefone, InputDate } from "../../common";
 
 interface ClienteFormProps {
     cliente: Cliente;
@@ -37,7 +37,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({
             {
                 formik.values.id && <div className="columns">
                     <Input id="id" name="id" onChange={formik.handleChange} value={formik.values.id} label="Código: *" autoComplete="off" columnClasses="is-half" disabled />
-                    <Input id="dataCadastro" name="dataCadastro" onChange={formik.handleChange} value={formik.values.dataCadastro} label="Data Cadastro: *" autoComplete="off"
+                    <InputDate id="dataCadastro" name="dataCadastro" onChange={formik.handleChange} value={formik.values.dataCadastro} label="Data Cadastro: *" autoComplete="off"
                         columnClasses="is-half" disabled />
                 </div>
             }
@@ -47,8 +47,8 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({
                  />
             </div>
             <div className="columns">
-                <Input id="cpf" name="cpf" onChange={formik.handleChange} value={formik.values.cpf} label="CPF: *" autoComplete="off" columnClasses="is-half" />
-                <Input id="nascimento" name="nascimento" onChange={formik.handleChange} value={formik.values.nascimento} label="Data Nascimento: *" autoComplete="off"
+                <InputCPF id="cpf" name="cpf" onChange={formik.handleChange} value={formik.values.cpf} label="CPF: *" autoComplete="off" columnClasses="is-half" />
+                <InputDate id="nascimento" name="nascimento" onChange={formik.handleChange} value={formik.values.nascimento} label="Data Nascimento: *" autoComplete="off"
                     columnClasses="is-half" />
             </div>
             <div className="columns">
@@ -57,7 +57,7 @@ export const ClienteForm: React.FC<ClienteFormProps> = ({
             </div>
             <div className="columns">
                 <Input id="email" name="email" onChange={formik.handleChange} value={formik.values.email} label="E-mail: *" autoComplete="off" columnClasses="is-half" />
-                <Input id="telefone" name="telefone" onChange={formik.handleChange} value={formik.values.telefone} label="Telefone: *" autoComplete="off"
+                <InputTelefone id="telefone" name="telefone" onChange={formik.handleChange} value={formik.values.telefone} label="Telefone: *" autoComplete="off"
                     columnClasses="is-half" />
             </div>
 

@@ -1,5 +1,6 @@
 import { Produto } from "@/app/models/produtos";
 import { formatReal } from "@/app/util/money";
+import { useState } from "react";
 
 interface TabelaProdutosProps {
   produtos: Array<Produto>;
@@ -48,6 +49,19 @@ const ProdutoRow: React.FC<ProdutoRowProps> = ({
   onDelete,
   onEdit,
 }) => {
+  const [deletando, setDeletando] = useState<boolean>(false);
+
+  const onDeleteClick = (produto: Produto) => {
+    if (deletando) {
+      onDelete(produto);
+      setDeletando(false);
+    } else {
+      setDeletando(true);
+    }
+  };
+
+  const cancelaDelete = () => setDeletando(false);
+
   return (
     <tr>
       <td>{produto.id}</td>
@@ -55,20 +69,30 @@ const ProdutoRow: React.FC<ProdutoRowProps> = ({
       <td>{produto.nome}</td>
       <td>{formatReal(produto.preco)}</td>
       <td>
-        <div className="buttons">
+        {!deletando && (
           <button
-            className="button is-info is-rounded is-small"
             onClick={(e) => onEdit(produto)}
+            className="button is-success is-rounded is-small"
           >
             Editar
           </button>
+        )}
+
+        <button
+          onClick={(e) => onDeleteClick(produto)}
+          className="button is-danger is-rounded  is-small"
+        >
+          {deletando ? "Confirma?" : "Deletar"}
+        </button>
+
+        {deletando && (
           <button
-            className="button is-danger is-rounded is-small"
-            onClick={(e) => onDelete(produto)}
+            onClick={cancelaDelete}
+            className="button is-rounded is-small"
           >
-            Excluir
+            Cancelar
           </button>
-        </div>
+        )}
       </td>
     </tr>
   );

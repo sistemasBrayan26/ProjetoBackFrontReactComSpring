@@ -62,4 +62,16 @@ public class ProdutoController {
                 p -> modelMapper.map(p, ProdutoFormRequest.class)).collect(Collectors.toList());
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id){
+        Optional<Produto> produtoExistente = produtoRepository.findById(id);
+
+        if (produtoExistente.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        produtoRepository.delete(produtoExistente.get());
+        return ResponseEntity.noContent().build();
+    }
+
 }

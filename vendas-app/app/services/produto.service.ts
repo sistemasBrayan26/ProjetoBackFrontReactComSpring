@@ -1,3 +1,4 @@
+import { string } from "yup";
 import { httpClient } from "../http";
 import { Produto } from "../models/produtos";
 import { AxiosResponse } from "axios";
@@ -24,9 +25,15 @@ export const useProdutoService = () => {
     return response.data;
   };
 
+  const deletar = async (id: string): Promise<void> => {
+    const url: string = `${resourceURL}/${id}`;
+    await httpClient.delete(url);
+  };
+
   return {
     salvar,
     atualizar,
     carregarProduto,
+    deletar,
   };
 };

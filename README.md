@@ -2,7 +2,7 @@ Comandos iniciais para o projeto usando yarn
 
 npm install -g yarn 
 
-yarn create next-app--typescript 
+yarn create next-app--typescript ou yarn create next-app --typescript --venda_app2 --no-app --no-src-dir
 
 yarn add bulma@0.9.2
 

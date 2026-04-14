@@ -5,6 +5,9 @@ import io.github.brayansistemas26.vendasapiback.model.repository.ClienteReposito
 import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,13 +53,10 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClienteFormRequest>> getLista() {
-        List<ClienteFormRequest> lista = clienteRepository.findAll()
-                .stream()
-                .map(cliente -> modelMapper.map(cliente, ClienteFormRequest.class))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(lista);
+    public Page<ClienteFormRequest> getLista(@RequestParam(required = false, defaultValue = "") String nome, @RequestParam(required = false,
+    defaultValue = "") String cpf, Pageable pageable) {
+        return clienteRepository.buscarPorNomeCpf("%" + nome + "%", "%" + cpf + "%", pageable).map(cliente ->
+                modelMapper.map(cliente, ClienteFormRequest.class));
     }
 
     @DeleteMapping("/{id}")

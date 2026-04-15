@@ -1,6 +1,6 @@
 /* 1. Defina a ordem de importância das camadas */
 /* O que vem por último na lista tem MAIOR prioridade */
-@layer tailwind-base, bulma, primereact, tailwind-utilities;
+@layer tailwind-base, bulma, primereact, primeflex, tailwind-utilities;
 
 /* 2. Importe o Tailwind v4 separadamente nas camadas */
 @import "tailwindcss" layer(tailwind-base);
@@ -12,6 +12,8 @@
 @import "primereact/resources/themes/lara-light-indigo/theme.css" layer(primereact);
 @import "primereact/resources/primereact.min.css" layer(primereact);
 @import "primeicons/primeicons.css";
+
+@import "primeflex/primeflex.css" layer(primeflex);
 
 /* 5. Seus estilos personalizados */
 @layer base {

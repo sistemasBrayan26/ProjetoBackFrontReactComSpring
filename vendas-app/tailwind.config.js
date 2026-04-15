@@ -2,17 +2,13 @@
 module.exports = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/primereact/**/*.{js,ts,jsx,tsx}",
-    // Or if using `src` directory:
-        "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {},
   },
   corePlugins: {
-    preflight: false, // Importante para não quebrar seu Bulma/PrimeReact
+    preflight: false, // ISSO AQUI É O QUE ESTÁ MATANDO O SEU CSS
   },
   plugins: [],
 }

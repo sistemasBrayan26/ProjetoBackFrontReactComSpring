@@ -1,17 +1,23 @@
-@import "tailwindcss";
+/* 1. Defina a ordem de importância das camadas */
+/* O que vem por último na lista tem MAIOR prioridade */
+@layer tailwind-base, bulma, primereact, tailwind-utilities;
 
-/* Bulma por último ou antes (não impacta tanto) */
-@import 'bulma/css/bulma.min.css';
+/* 2. Importe o Tailwind v4 separadamente nas camadas */
+@import "tailwindcss" layer(tailwind-base);
 
-@import 'primereact/resources/themes/lara-light-blue/theme.css';
-@import 'primereact/resources/primereact.min.css';
-@import 'primeicons/primeicons.css';
+/* 3. Importe o Bulma */
+@import "bulma/css/bulma.min.css" layer(bulma);
 
+/* 4. Importe o PrimeReact COM CAMADA */
+@import "primereact/resources/themes/lara-light-indigo/theme.css" layer(primereact);
+@import "primereact/resources/primereact.min.css" layer(primereact);
+@import "primeicons/primeicons.css";
 
-
-
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background-color: #f8f9fa;
+/* 5. Seus estilos personalizados */
+@layer base {
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #f8f9fa;
+  }
 }

@@ -8,11 +8,12 @@ import { Cliente } from "@/app/models/clientes";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
+import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Page } from "@/app/models/common/page";
 import { useClienteService } from "@/app/services";
 import { useEffect } from "react";
 import { DataTableStateEvent } from "primereact/datatable";
-import { PrimeReactProvider } from "primereact/api";
+import { useRouter } from "next/navigation";
 
 interface ConsultaClientesForm {
   nome?: string;
@@ -23,6 +24,7 @@ export const ListagemClientes: React.FC = () => {
 
   const service = useClienteService();
   const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
   const [clientes, setClientes] = useState<Page<Cliente>>({
     content : [],
     first : 0,
@@ -60,20 +62,34 @@ export const ListagemClientes: React.FC = () => {
     });
   };
 
+  const deletar = (cliente : Cliente) => {
+      service.deletar(cliente.id).then(result => {
+        handlePage({page: 0, rows: clientes.size} as any);
+      })
+  }
+
   const actionTemplate = (registro: Cliente) => {
+    const url = `/cadastros/clientes?id=${registro.id}`
   return (
     <div className="!flex !gap-4"> {/* Tailwind para espaçamento */}
       <Button 
         icon="pi pi-pencil" // Ícones do PrimeIcons que você já importou
         rounded 
         severity="info" 
-        tooltip="Editar"
+        tooltip="Editar" onClick={e => router.push(url)}
       />
+      <ConfirmPopup  />
       <Button 
         icon="pi pi-trash" 
         rounded 
         severity="danger" 
-        tooltip="Deletar"
+        tooltip="Deletar" onClick={ e => {
+          confirmPopup({
+            target : e.currentTarget,
+            message : "Confirma a exclusão deste registro?",
+            acceptLabel: "Sim", rejectLabel: "Não", accept: () => deletar(registro)
+          })
+        }}
       />
     </div>
   )

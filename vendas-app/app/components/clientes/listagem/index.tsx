@@ -8,7 +8,7 @@ import { Cliente } from "@/app/models/clientes";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
+import { ConfirmDialog , confirmDialog } from "primereact/confirmdialog";
 import { Page } from "@/app/models/common/page";
 import { useClienteService } from "@/app/services";
 import { useEffect } from "react";
@@ -29,7 +29,7 @@ export const ListagemClientes: React.FC = () => {
     content : [],
     first : 0,
     number: 0, 
-    size: 10, 
+    size: 5, 
     totalElements : 0
   });
 
@@ -53,7 +53,7 @@ export const ListagemClientes: React.FC = () => {
   const handlePage = (event: DataTableStateEvent) => {
     setLoading(true)
     const page = event?.page ?? 0;
-    const rows = event?.rows ?? (clientes.size || 10);
+    const rows = event?.rows ?? (clientes.size || 5);
 
     service.find(filtro.nome, filtro.cpf, page, rows).then(result => {
       setClientes({...result, first: page * rows});
@@ -69,7 +69,7 @@ export const ListagemClientes: React.FC = () => {
   }
 
   const actionTemplate = (registro: Cliente) => {
-    const url = `/cadastros/clientes?id=${registro.id}`
+    const url = `/cadastros/clientes/${registro.id}`
   return (
     <div className="!flex !gap-4"> {/* Tailwind para espaçamento */}
       <Button 
@@ -78,16 +78,15 @@ export const ListagemClientes: React.FC = () => {
         severity="info" 
         tooltip="Editar" onClick={e => router.push(url)}
       />
-      <ConfirmPopup  />
       <Button 
         icon="pi pi-trash" 
         rounded 
         severity="danger" 
         tooltip="Deletar" onClick={ e => {
-          confirmPopup({
-            target : e.currentTarget,
+          confirmDialog({
             message : "Confirma a exclusão deste registro?",
-            acceptLabel: "Sim", rejectLabel: "Não", accept: () => deletar(registro)
+            acceptLabel: "Sim", rejectLabel: "Não", accept: () => deletar(registro),
+            header : "Confirmação"
           })
         }}
       />
@@ -130,9 +129,16 @@ export const ListagemClientes: React.FC = () => {
               Consultar
             </button>
           </div>
+          <div className="control is-link">
+            <button type="submit" onClick={ e => router.push("/cadastros/clientes")} className="button is-warning">
+              Novo
+            </button>
+          </div>
         </div>
       </form>
       <br />
+
+      <ConfirmDialog />
 
       <div className="columns">
         <div className="column is-full">

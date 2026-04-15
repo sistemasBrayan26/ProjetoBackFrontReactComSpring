@@ -3,34 +3,48 @@
 import { Cliente } from "@/app/models/clientes";
 import { Layout } from "../../layout"
 import { ClienteForm } from "./form"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useClienteService } from "@/app/services";
 import { Alert } from "../../common/message";
+import { useRouter, useParams } from "next/navigation";
 
-export const CadastroCliente : React.FC = () => {
+export const CadastroCliente: React.FC = () => {
 
     const [cliente, setCliente] = useState<Cliente>({});
     const [messages, setMessages] = useState<Array<Alert>>([])
 
     const service = useClienteService();
+    const router = useRouter();
+    const params = useParams();
+    const queryId = params?.id;
 
-    const handleSubmit = (cliente : Cliente) => {
 
-        if (cliente.id){
+    useEffect(() => {
+        if (queryId){
+            service.carregarCliente(String(queryId)).then(clienteFiltrado => {
+                setCliente(clienteFiltrado)
+            })
+        }
+
+    }, [queryId])
+
+    const handleSubmit = (cliente: Cliente) => {
+
+        if (cliente.id) {
             service.atualizar(cliente).then(response => {
                 setMessages([{
-                    tipo : "success", texto : "Cliente atualizado com sucesso!"
+                    tipo: "success", texto: "Cliente atualizado com sucesso!"
                 }])
             })
         } else {
             service.salvar(cliente).then(clienteSalvo => {
                 setCliente(clienteSalvo);
                 setMessages([{
-                    tipo : "success", texto : "Cliente salvo com sucesso!"
+                    tipo: "success", texto: "Cliente salvo com sucesso!"
                 }])
             })
         }
-        
+
     }
 
     return (

@@ -29,7 +29,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     const clienteService = useClienteService();
     const produtoService = useProdutoService();
     const [codigoProduto, setCodigoProduto] = useState<string>('');
-    const [produto, setProduto] = useState<Produto>({});
+    const [produto, setProduto] = useState<Produto>(null);
 
     const [listaClientes, setListaClientes] = useState<Page<Cliente>>({
         content: [], first: 0, number: 0, size: 0, totalElements: 0
@@ -46,6 +46,13 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
     const handleCodigoProdutoSelect = () => {
         produtoService.carregarProduto(codigoProduto).then(produtoEncontrado => setProduto(produtoEncontrado)).catch(err => console.log(err))
+    }
+
+    const handleAddProduto = () => {
+        const produtosJaAdicinados = formik.values.produtos
+        produtosJaAdicinados?.push(produto)
+        setProduto(null)
+        setCodigoProduto('')
     }
 
     return (
@@ -79,8 +86,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                     </div>
 
                     <div className="col-2">
-                        {/* O botão agora ficará na mesma linha devido ao grid */}
-                        <Button type="button" label="Adicionar"  />
+                        <Button type="button" label="Adicionar" onClick={handleAddProduto}  />
                     </div>
 
                 </div>

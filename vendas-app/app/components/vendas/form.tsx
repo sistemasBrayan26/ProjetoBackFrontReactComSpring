@@ -2,7 +2,7 @@
 
 import { Cliente } from "@/app/models/clientes";
 import { Page } from "@/app/models/common/page";
-import { Venda } from "@/app/models/vendas";
+import { ItemVenda, Venda } from "@/app/models/vendas";
 import { useClienteService } from "@/app/services";
 import { useProdutoService } from "@/app/services";
 import { useFormik } from "formik";
@@ -16,6 +16,7 @@ import { Produto } from "@/app/models/produtos";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { formatReal } from "@/app/util/money";
 
 interface VendasFormProps {
     onSubmit: (venda: Venda) => void;
@@ -31,6 +32,8 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
     const clienteService = useClienteService();
     const produtoService = useProdutoService();
+    const [listaProdutos, setListaProdutos] = useState<Produto[]>([]);
+    const [listaFiltradaProdutos, setListaFiltradaProdutos] = useState<Produto[]>([]);
     const [mensagem, setMensagem] = useState<string>('');
     const [codigoProduto, setCodigoProduto] = useState<string>('');
     const [quantidadeProduto, setQuantidadeProduto] = useState<number>(0);
@@ -59,14 +62,33 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     }
 
     const handleAddProduto = () => {
-        const itensAdicionados = formik.values.itens
-        itensAdicionados?.push({
-            produto: produto,
-            quantidade: quantidadeProduto
-        })
-        setProduto(null)
-        setCodigoProduto('')
-        setQuantidadeProduto(0)
+        // 1. Criamos uma cópia do array atual para não mutar o estado diretamente
+        const itensAtualizados = [...formik.values.itens ?? []];
+
+        const indexExistente = itensAtualizados.findIndex((iv: ItemVenda) => iv.produto.id === produto.id);
+
+        if (indexExistente !== -1) {
+            // 2. Se já existe, criamos uma cópia do item e incrementamos
+            const itemExistente = itensAtualizados[indexExistente];
+            itensAtualizados[indexExistente] = {
+                ...itemExistente,
+                quantidade: itemExistente.quantidade + quantidadeProduto
+            };
+        } else {
+            // 3. Se não existe, adicionamos o novo item
+            itensAtualizados.push({
+                produto: produto,
+                quantidade: quantidadeProduto
+            });
+        }
+
+        // 4. USAR O SETFIELDVALUE PARA O FORMIK NOTAR A MUDANÇA
+        formik.setFieldValue("itens", itensAtualizados);
+
+        // Limpeza dos campos
+        setProduto(null);
+        setCodigoProduto('');
+        setQuantidadeProduto(0);
     }
 
     const dialogMensagemFooter = () => {
@@ -85,6 +107,22 @@ export const VendasForm: React.FC<VendasFormProps> = ({
         setMensagem('');
         setCodigoProduto('');
         setProduto(null);
+    }
+
+    const handleProdutoAutoComplete = async (e : AutoCompleteCompleteEvent) => {
+        const nomeProduto = e.query;
+
+        if (!listaProdutos.length){
+            const produtosEncontrados = await produtoService.listar();
+            setListaProdutos(produtosEncontrados)
+        }
+
+        const produtosEncontrados = listaProdutos.filter((produto : Produto) => {
+            return produto.nome?.toUpperCase().includes(nomeProduto.toUpperCase())
+        })
+
+        setListaFiltradaProdutos(produtosEncontrados);
+            
     }
 
     return (
@@ -107,12 +145,13 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                     </div>
 
                     <div className="col-5">
-                        <AutoComplete value={produto} field="nome" />
+                        <AutoComplete value={produto} field="nome" id="produto" name="produto" suggestions={listaFiltradaProdutos} 
+                        completeMethod={handleProdutoAutoComplete} onChange={e => setProduto(e.value)} />
                     </div>
 
                     <div className="col-2">
                         <FloatLabel>
-                            <InputText id="qtdProduto" value={quantidadeProduto} onChange={e => setQuantidadeProduto(parseInt(e.target.value))} />
+                            <InputText id="qtdProduto" value={quantidadeProduto} onChange={e => setQuantidadeProduto(parseInt(e.target.value) || 0)} />
                             <label htmlFor="qtdProduto">QTD</label>
                         </FloatLabel>
                     </div>
@@ -126,7 +165,15 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                             <Column field="produto.id" header={"Código"} />
                             <Column field="produto.sku" header={"SKU"} />
                             <Column field="produto.nome" header={"Produto"} />
+                            <Column field="produto.preco" header={"Preço Unitário"} />
                             <Column field="quantidade" header={"QTD"} />
+                            <Column header="Total" body={(iv : ItemVenda) => {
+                                return (
+                                    <div>
+                                        {iv.produto.preco * iv.quantidade}
+                                    </div>
+                                )
+                            }} />
 
                         </DataTable>
                     </div>

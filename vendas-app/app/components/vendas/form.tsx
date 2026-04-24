@@ -16,7 +16,12 @@ import { Produto } from "@/app/models/produtos";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { formatReal } from "@/app/util/money";
+import { Dropdown } from "primereact/dropdown";
+import { validationScheme } from "./validationScheme";
+
+const formatorMoney = new Intl.NumberFormat('pt-BR', {
+    style : 'currency', currency: 'BRL'
+})
 
 interface VendasFormProps {
     onSubmit: (venda: Venda) => void;
@@ -30,6 +35,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     onSubmit
 }) => {
 
+    const formasPagamento: String[] = ["DINHEIRO", "PIX", "CARTÃO CREDITO", "CARTÃO DEBITO"]
     const clienteService = useClienteService();
     const produtoService = useProdutoService();
     const [listaProdutos, setListaProdutos] = useState<Produto[]>([]);
@@ -44,7 +50,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     });
 
     const formik = useFormik<Venda>({
-        onSubmit, initialValues: formScheme
+        onSubmit, initialValues: formScheme, validationSchema : validationScheme
     })
 
     const handleClienteAutoComplete = (e: AutoCompleteCompleteEvent) => {
@@ -84,11 +90,14 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
         // 4. USAR O SETFIELDVALUE PARA O FORMIK NOTAR A MUDANÇA
         formik.setFieldValue("itens", itensAtualizados);
+        const total = calcularTotal(itensAtualizados);
+        formik.setFieldValue("total", total);
 
         // Limpeza dos campos
         setProduto(null);
         setCodigoProduto('');
         setQuantidadeProduto(0);
+
     }
 
     const dialogMensagemFooter = () => {
@@ -109,20 +118,30 @@ export const VendasForm: React.FC<VendasFormProps> = ({
         setProduto(null);
     }
 
-    const handleProdutoAutoComplete = async (e : AutoCompleteCompleteEvent) => {
+    const handleProdutoAutoComplete = async (e: AutoCompleteCompleteEvent) => {
         const nomeProduto = e.query;
 
-        if (!listaProdutos.length){
+        if (!listaProdutos.length) {
             const produtosEncontrados = await produtoService.listar();
             setListaProdutos(produtosEncontrados)
         }
 
-        const produtosEncontrados = listaProdutos.filter((produto : Produto) => {
+        const produtosEncontrados = listaProdutos.filter((produto: Produto) => {
             return produto.nome?.toUpperCase().includes(nomeProduto.toUpperCase())
         })
 
         setListaFiltradaProdutos(produtosEncontrados);
-            
+
+    }
+
+    const calcularTotal = (itens: ItemVenda[]) => {
+        if (!itens || itens.length === 0) {
+            return 0;
+        }
+
+        return itens.reduce((somatoria, item) => {
+            return somatoria + (item.quantidade * item.produto.preco);
+        }, 0);
     }
 
     return (
@@ -133,6 +152,9 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                     <label htmlFor="cliente"> Cliente: *</label>
                     <AutoComplete id="cliente" name="cliente" suggestions={listaClientes.content} completeMethod={handleClienteAutoComplete}
                         value={formik.values.cliente} field="nome" onChange={e => formik.setFieldValue("cliente", e.value)} />
+                        <small className="help is-danger">
+                            {formik.errors.cliente}
+                        </small>
                 </div>
 
                 <div className="field grid align-items-end">
@@ -145,8 +167,8 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                     </div>
 
                     <div className="col-5">
-                        <AutoComplete value={produto} field="nome" id="produto" name="produto" suggestions={listaFiltradaProdutos} 
-                        completeMethod={handleProdutoAutoComplete} onChange={e => setProduto(e.value)} />
+                        <AutoComplete value={produto} field="nome" id="produto" name="produto" suggestions={listaFiltradaProdutos}
+                            completeMethod={handleProdutoAutoComplete} onChange={e => setProduto(e.value)} />
                     </div>
 
                     <div className="col-2">
@@ -161,21 +183,49 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                     </div>
 
                     <div className="col-12">
-                        <DataTable value={formik.values.itens}>
+                        <DataTable value={formik.values.itens} emptyMessage="Nenhum produto selecionado">
                             <Column field="produto.id" header={"Código"} />
                             <Column field="produto.sku" header={"SKU"} />
                             <Column field="produto.nome" header={"Produto"} />
                             <Column field="produto.preco" header={"Preço Unitário"} />
                             <Column field="quantidade" header={"QTD"} />
-                            <Column header="Total" body={(iv : ItemVenda) => {
+                            <Column header="Total" body={(iv: ItemVenda) => {
+                                const total = iv.produto.preco * iv.quantidade;
+                                const totalFormatado = formatorMoney.format(total);
                                 return (
                                     <div>
-                                        {iv.produto.preco * iv.quantidade}
+                                        {totalFormatado}
                                     </div>
                                 )
                             }} />
 
                         </DataTable>
+                        <small className="help is-danger">
+                            {formik.errors.itens}
+                        </small>
+                    </div>
+
+                    <div className="col-5">
+
+                        <label htmlFor="formaPagamento">Forma de Pagamento: *</label>
+                        <Dropdown id="formaPagamento" options={formasPagamento} value={formik.values.formaPagamento}
+                            onChange={e => formik.setFieldValue("formaPagamento", e.value)} placeholder="Selecione ..." />
+                            <small className="help is-danger">
+                            {formik.errors.formaPagamento}
+                        </small>
+
+                    </div>
+
+                    <div className="col-2">
+                        <label htmlFor="itens">Itens: </label>
+                        <InputText disabled value={formik.values.itens?.length} />
+
+                    </div>
+
+                    <div className="col-4">
+                        <label htmlFor="totalVenda">Total: </label>
+                        <InputText disabled value={formatorMoney.format(formik.values.total)} />
+
                     </div>
 
 

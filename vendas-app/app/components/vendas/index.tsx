@@ -3,15 +3,23 @@
 import { Venda } from "@/app/models/vendas";
 import { Layout } from "../layout";
 import { VendasForm } from "./form";
+import { useVendasService } from "@/app/services";
+import { Alert } from "../common/message";
+import { useState } from "react";
 
 export const Vendas : React.FC = () => {
 
+    const useVendaService = useVendasService();
+    const [messages, setMessages] = useState<Alert[]>([]);
+
     const handleSubmit = (venda : Venda) => {
-        console.log(venda);
+        useVendaService.realizarVenda(venda).then(response => {
+            setMessages([{texto: "Venda realizada com sucesso!", tipo : "success"}])
+        }).catch(error => setMessages([{"texto" : "Ocorreu um erro, entre em contato com a administração" + error, tipo : "warning"}]))
     }
 
     return (
-        <Layout titulo="Emissão de Venda">
+        <Layout titulo="Emissão de Venda" mensagens={messages}>
             <VendasForm onSubmit={handleSubmit} />
 
         </Layout>

@@ -35,7 +35,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     onSubmit
 }) => {
 
-    const formasPagamento: String[] = ["DINHEIRO", "PIX", "CARTÃO CREDITO", "CARTÃO DEBITO"]
+    const formasPagamento: String[] = ["DINHEIRO", "CARTAO"]
     const clienteService = useClienteService();
     const produtoService = useProdutoService();
     const [listaProdutos, setListaProdutos] = useState<Produto[]>([]);
@@ -61,7 +61,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     const handleCodigoProdutoSelect = () => {
         if (codigoProduto) {
             produtoService.carregarProduto(codigoProduto).then(produtoEncontrado => setProduto(produtoEncontrado)).catch(err => {
-                setMensagem("Produto não encontrado!")
+                setMensagem("Produto não encontrado!" + err)
             })
         }
 
@@ -184,6 +184,17 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
                     <div className="col-12">
                         <DataTable value={formik.values.itens} emptyMessage="Nenhum produto selecionado">
+                            <Column body={(item : ItemVenda) => {
+
+                                const handleRemoverItem = () => {
+                                    const novaLista = formik.values.itens?.filter(iv => iv.produto.id !== item.produto.id);
+                                    formik.setFieldValue("itens", novaLista)
+                                }
+
+                                return (
+                                    <Button type="button" label="Excluir" onClick={handleRemoverItem} />
+                                )
+                            }} />
                             <Column field="produto.id" header={"Código"} />
                             <Column field="produto.sku" header={"SKU"} />
                             <Column field="produto.nome" header={"Produto"} />
@@ -201,7 +212,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
                         </DataTable>
                         <small className="help is-danger">
-                            {formik.errors.itens}
+                            {formik.touched && formik.errors.itens}
                         </small>
                     </div>
 

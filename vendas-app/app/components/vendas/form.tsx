@@ -25,6 +25,8 @@ const formatorMoney = new Intl.NumberFormat('pt-BR', {
 
 interface VendasFormProps {
     onSubmit: (venda: Venda) => void;
+    onNovaVenda: () => void;
+    vendaRealizada: boolean;
 }
 
 const formScheme: Venda = {
@@ -32,7 +34,7 @@ const formScheme: Venda = {
 }
 
 export const VendasForm: React.FC<VendasFormProps> = ({
-    onSubmit
+    onSubmit, vendaRealizada, onNovaVenda
 }) => {
 
     const formasPagamento: String[] = ["DINHEIRO", "CARTAO"]
@@ -61,7 +63,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     const handleCodigoProdutoSelect = () => {
         if (codigoProduto) {
             produtoService.carregarProduto(codigoProduto).then(produtoEncontrado => setProduto(produtoEncontrado)).catch(err => {
-                setMensagem("Produto não encontrado!" + err)
+                setMensagem("Produto não encontrado!")
             })
         }
 
@@ -142,6 +144,13 @@ export const VendasForm: React.FC<VendasFormProps> = ({
         return itens.reduce((somatoria, item) => {
             return somatoria + (item.quantidade * item.produto.preco);
         }, 0);
+    }
+
+    const realizarNovaVenda = () => {
+        onNovaVenda();
+        formik.resetForm();
+        formik.setFieldValue("itens", []);
+        formik.setFieldTouched("itens", false);
     }
 
     return (
@@ -241,8 +250,12 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
 
                 </div>
-
-                <Button type="submit" label="Finalizar" />
+                {
+                    !vendaRealizada && <Button type="submit" label="Finalizar" />
+                } 
+                {
+                    vendaRealizada && <Button type="button" label="Nova Venda" severity="success" onClick={realizarNovaVenda} /> 
+                }
 
             </div>
 

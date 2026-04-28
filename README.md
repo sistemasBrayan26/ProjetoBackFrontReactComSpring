@@ -17,3 +17,5 @@ yarn add formik
 yarn add @4us-dev/utils
 
 yarn add primereact
+
+yarn add next@15.1.0 react@18.3.1 react-dom@18.3.1 --> Corrigir problema que estava acontecendo de travamento

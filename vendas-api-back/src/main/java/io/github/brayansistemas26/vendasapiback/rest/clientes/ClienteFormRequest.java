@@ -1,4 +1,4 @@
-package io.github.brayansistemas26.vendasapiback.rest.produtos;
+package io.github.brayansistemas26.vendasapiback.rest.clientes;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

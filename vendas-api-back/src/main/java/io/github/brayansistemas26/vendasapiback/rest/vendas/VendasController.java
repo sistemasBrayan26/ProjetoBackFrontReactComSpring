@@ -1,4 +1,4 @@
-package io.github.brayansistemas26.vendasapiback.rest.produtos;
+package io.github.brayansistemas26.vendasapiback.rest.vendas;
 
 import io.github.brayansistemas26.vendasapiback.model.Venda;
 import io.github.brayansistemas26.vendasapiback.model.repository.ItemVendaRepository;
@@ -8,13 +8,8 @@ import io.github.brayansistemas26.vendasapiback.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @RestController

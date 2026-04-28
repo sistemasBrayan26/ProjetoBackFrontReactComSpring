@@ -1,20 +1,13 @@
-package io.github.brayansistemas26.vendasapiback.rest.produtos;
+package io.github.brayansistemas26.vendasapiback.rest.clientes;
 
 import io.github.brayansistemas26.vendasapiback.model.Cliente;
 import io.github.brayansistemas26.vendasapiback.model.repository.ClienteRepository;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/clientes")

@@ -18,9 +18,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
 import { validationScheme } from "./validationScheme";
+import { InputDate } from "../common";
 
 const formatorMoney = new Intl.NumberFormat('pt-BR', {
-    style : 'currency', currency: 'BRL'
+    style: 'currency', currency: 'BRL'
 })
 
 interface VendasFormProps {
@@ -52,7 +53,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
     });
 
     const formik = useFormik<Venda>({
-        onSubmit, initialValues: formScheme, validationSchema : validationScheme
+        onSubmit, initialValues: formScheme, validationSchema: validationScheme
     })
 
     const handleClienteAutoComplete = (e: AutoCompleteCompleteEvent) => {
@@ -158,13 +159,17 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
             <div className="p-fluid w-full">
                 <div className="field">
+
                     <label htmlFor="cliente"> Cliente: *</label>
                     <AutoComplete id="cliente" name="cliente" suggestions={listaClientes.content} completeMethod={handleClienteAutoComplete}
                         value={formik.values.cliente} field="nome" onChange={e => formik.setFieldValue("cliente", e.value)} />
-                        <small className="help is-danger">
-                            {formik.errors.cliente}
-                        </small>
+                    <small className="help is-danger">
+                        {formik.errors.cliente}
+                    </small>
+
+
                 </div>
+                <br />
 
                 <div className="field grid align-items-end">
 
@@ -193,7 +198,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
 
                     <div className="col-12">
                         <DataTable value={formik.values.itens} emptyMessage="Nenhum produto selecionado">
-                            <Column body={(item : ItemVenda) => {
+                            <Column body={(item: ItemVenda) => {
 
                                 const handleRemoverItem = () => {
                                     const novaLista = formik.values.itens?.filter(iv => iv.produto.id !== item.produto.id);
@@ -230,7 +235,7 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                         <label htmlFor="formaPagamento">Forma de Pagamento: *</label>
                         <Dropdown id="formaPagamento" options={formasPagamento} value={formik.values.formaPagamento}
                             onChange={e => formik.setFieldValue("formaPagamento", e.value)} placeholder="Selecione ..." />
-                            <small className="help is-danger">
+                        <small className="help is-danger">
                             {formik.errors.formaPagamento}
                         </small>
 
@@ -252,9 +257,9 @@ export const VendasForm: React.FC<VendasFormProps> = ({
                 </div>
                 {
                     !vendaRealizada && <Button type="submit" label="Finalizar" />
-                } 
+                }
                 {
-                    vendaRealizada && <Button type="button" label="Nova Venda" severity="success" onClick={realizarNovaVenda} /> 
+                    vendaRealizada && <Button type="button" label="Nova Venda" severity="success" onClick={realizarNovaVenda} />
                 }
 
             </div>

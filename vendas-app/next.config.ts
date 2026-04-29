@@ -2,10 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  devIndicators: false,
-  turbopack : {
-    root: __dirname
-  }
+  devIndicators: {
+    appIsrStatus: false, // substitui o antigo comportamento booleano
+  },
   
 };
 

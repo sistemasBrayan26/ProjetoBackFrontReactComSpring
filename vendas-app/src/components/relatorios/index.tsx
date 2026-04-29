@@ -1,0 +1,1 @@
+export {RelatorioVendas} from '@/src/components/relatorios/vendas'

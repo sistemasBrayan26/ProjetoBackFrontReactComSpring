@@ -23,3 +23,5 @@ yarn add next@15.1.0 react@18.3.1 react-dom@18.3.1 --> Corrigir problema que est
 yarn add chart.js
 
 yarn add next-auth
+
+yarn add @types/next-auth -D

@@ -1,1 +1,1 @@
-export {RelatorioVendas} from '@/src/components/relatorios/vendas'
+export { RelatorioVendas } from "@/components/relatorios/vendas";

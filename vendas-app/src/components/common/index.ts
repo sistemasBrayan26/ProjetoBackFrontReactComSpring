@@ -1,3 +1,9 @@
-export {Input, InputMoney, InputCPF, InputTelefone, InputDate} from '@/src/components/common/input' 
-export {Message} from '@/src/components/common/message'
-export {Loader} from '@/src/components/common/loader'
+export {
+  Input,
+  InputMoney,
+  InputCPF,
+  InputTelefone,
+  InputDate,
+} from "@/components/common/input";
+export { Message } from "@/components/common/message";
+export { Loader } from "@/components/common/loader";

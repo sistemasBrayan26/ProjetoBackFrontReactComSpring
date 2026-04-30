@@ -1,10 +1,10 @@
 export { Layout } from "./layout";
 export { CadastroProdutos, ListagemProdutos } from "./produtos";
 export { CadastroCliente, ListagemClientes } from "./clientes";
-export {Vendas} from './vendas';
-export {RelatorioVendas} from './relatorios';
-export {Dashboard} from './dashboard';
-export {RotaAutenticada} from './rotaautenticada';
+export { Vendas } from "./vendas";
+export { RelatorioVendas } from "./relatorios";
+export { Dashboard } from "./dashboard";
+export { RotaAutenticada } from "./rotaautenticada";
 export {
   Input,
   InputMoney,
@@ -13,4 +13,4 @@ export {
   InputDate,
   Message,
   Loader,
-} from "@/src/components/common";
+} from "@/components/common";

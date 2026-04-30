@@ -4,13 +4,13 @@ import { Layout } from "../../layout";
 import { Input, InputCPF } from "../../common";
 import { useFormik } from "formik";
 import { useState } from "react";
-import { Cliente } from "@/src/app/models/clientes";
+import { Cliente } from "@/app/models/clientes";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
-import { ConfirmDialog , confirmDialog } from "primereact/confirmdialog";
-import { Page } from "@/src/app/models/common/page";
-import { useClienteService } from "@/src/app/services";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { Page } from "@/app/models/common/page";
+import { useClienteService } from "@/app/services";
 import { useEffect } from "react";
 import { DataTableStateEvent } from "primereact/datatable";
 import { useRouter } from "next/navigation";
@@ -21,20 +21,19 @@ interface ConsultaClientesForm {
 }
 
 export const ListagemClientes: React.FC = () => {
-
   const service = useClienteService();
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const [clientes, setClientes] = useState<Page<Cliente>>({
-    content : [],
-    first : 0,
-    number: 0, 
-    size: 5, 
-    totalElements : 0
+    content: [],
+    first: 0,
+    number: 0,
+    size: 5,
+    totalElements: 0,
   });
 
   const handleSubmit = (filtro: ConsultaClientesForm) => {
-    handlePage({page: 0, rows: clientes.size} as any);
+    handlePage({ page: 0, rows: clientes.size } as any);
   };
 
   const {
@@ -51,57 +50,65 @@ export const ListagemClientes: React.FC = () => {
 
   // Função de busca centralizada
   const handlePage = (event: DataTableStateEvent) => {
-    setLoading(true)
+    setLoading(true);
     const page = event?.page ?? 0;
     const rows = event?.rows ?? (clientes.size || 5);
 
-    service.find(filtro.nome, filtro.cpf, page, rows).then(result => {
-      setClientes({...result, first: page * rows});
-    }).finally(() => {
-      setLoading(false)
+    service
+      .find(filtro.nome, filtro.cpf, page, rows)
+      .then((result) => {
+        setClientes({ ...result, first: page * rows });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const deletar = (cliente: Cliente) => {
+    service.deletar(cliente.id).then((result) => {
+      handlePage({ page: 0, rows: clientes.size } as any);
     });
   };
 
-  const deletar = (cliente : Cliente) => {
-      service.deletar(cliente.id).then(result => {
-        handlePage({page: 0, rows: clientes.size} as any);
-      })
-  }
-
   const actionTemplate = (registro: Cliente) => {
-    const url = `/cadastros/clientes/${registro.id}`
-  return (
-    <div className="!flex !gap-4"> {/* Tailwind para espaçamento */}
-      <Button 
-        icon="pi pi-pencil" // Ícones do PrimeIcons que você já importou
-        rounded 
-        severity="info" 
-        tooltip="Editar" onClick={e => router.push(url)}
-      />
-      <Button 
-        icon="pi pi-trash" 
-        rounded 
-        severity="danger" 
-        tooltip="Deletar" onClick={ e => {
-          confirmDialog({
-            message : "Confirma a exclusão deste registro?",
-            acceptLabel: "Sim", rejectLabel: "Não", accept: () => deletar(registro),
-            header : "Confirmação"
-          })
-        }}
-      />
-    </div>
-  )
-}
+    const url = `/cadastros/clientes/${registro.id}`;
+    return (
+      <div className="!flex !gap-4">
+        {" "}
+        {/* Tailwind para espaçamento */}
+        <Button
+          icon="pi pi-pencil" // Ícones do PrimeIcons que você já importou
+          rounded
+          severity="info"
+          tooltip="Editar"
+          onClick={(e) => router.push(url)}
+        />
+        <Button
+          icon="pi pi-trash"
+          rounded
+          severity="danger"
+          tooltip="Deletar"
+          onClick={(e) => {
+            confirmDialog({
+              message: "Confirma a exclusão deste registro?",
+              acceptLabel: "Sim",
+              rejectLabel: "Não",
+              accept: () => deletar(registro),
+              header: "Confirmação",
+            });
+          }}
+        />
+      </div>
+    );
+  };
 
   // Carregar dados ao entrar na tela
   useEffect(() => {
-    handlePage({page: 0, rows: clientes.size} as any);
+    handlePage({ page: 0, rows: clientes.size } as any);
   }, []);
 
   return (
     <Layout titulo="Consulta de Clientes">
-      
       <form onSubmit={formikSubmit}>
         <div className="columns">
           <Input
@@ -130,7 +137,11 @@ export const ListagemClientes: React.FC = () => {
             </button>
           </div>
           <div className="control is-link">
-            <button type="submit" onClick={ e => router.push("/cadastros/clientes")} className="button is-warning">
+            <button
+              type="submit"
+              onClick={(e) => router.push("/cadastros/clientes")}
+              className="button is-warning"
+            >
               Novo
             </button>
           </div>
@@ -142,18 +153,26 @@ export const ListagemClientes: React.FC = () => {
 
       <div className="columns">
         <div className="column is-full">
-          <DataTable value={clientes.content} totalRecords={clientes.totalElements} lazy
-          paginator first={clientes.first || 0} rows={clientes.size} onPage={handlePage} loading={loading}
-          emptyMessage={"Nenhum registro encontrado"} dataKey="id">
-              <Column field="id" header="Código" />
-              <Column field="nome" header="Nome" />
-              <Column field="cpf" header="CPF" />
-              <Column field="email" header="E-mail" />
-              <Column body={actionTemplate} />
+          <DataTable
+            value={clientes.content}
+            totalRecords={clientes.totalElements}
+            lazy
+            paginator
+            first={clientes.first || 0}
+            rows={clientes.size}
+            onPage={handlePage}
+            loading={loading}
+            emptyMessage={"Nenhum registro encontrado"}
+            dataKey="id"
+          >
+            <Column field="id" header="Código" />
+            <Column field="nome" header="Nome" />
+            <Column field="cpf" header="CPF" />
+            <Column field="email" header="E-mail" />
+            <Column body={actionTemplate} />
           </DataTable>
         </div>
       </div>
-
     </Layout>
   );
 };
